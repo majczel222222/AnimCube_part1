@@ -3,26 +3,6 @@ import java.awt.event.*;
 import java.applet.*;
 import java.util.Hashtable;
 
-
-/*  natural             = stanObojetny
-    bgColor             = kolorTla
-    buttonBgColor       = przyciskKoloruTla
-    colors              = barwy
-    cube                = kostka
-    initialCube         = stanPoczatkowyKostki
-    faceNormals         = wektoryNormalneScianKostki
-    cornerCoords        = wspolrzedneNaroznikowKostki
-    faceCorners         = naroznikiScianKostki
-    oppositeCorners     = naroznikiScianPrzeciwnych
-    adjacentFaces       = scianyPrzylegle
-    twistedLayer        = warstwaObracana
-    twistedMode         = obracanie
-    faceTwistDirs       = kierunkiScianPrzyObracaniu
-
-
-*/
-
-
 public final class AnimCube extends Applet implements Runnable, MouseListener, MouseMotionListener {
 
 
@@ -112,12 +92,6 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
 
 
     // wstepne osie wspolrzednych obserwatora (widok)
-    // eye = obserwator
-    // eyeX = widokBokiem
-    // eyeY = widokPionowy
-    // initialEye = wstepnyObserwator
-    // initialEyeX = wstepnyWidokBokiem
-    // initialEyeY = wstepnyWidokPionowy
     private final double[] obserwator = {0.0, 0.0, -1.0};
     private final double[] widokBokiem = {1.0, 0.0, 0.0}; // (bokiem)
     private final double[] widokPionowy = new double[3]; // (pionowo)
@@ -127,18 +101,11 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
 
 
     // kat obrotu obracanej warstwy
-    // currentAngle = katPoObrocie
-    // originalAngle = katPrzedObrotem
     private double katPoObrocie; // edited angle of twisted layer
     private double katPrzedObrotem; // angle of twisted layer
 
 
     // animation speed
-    // toTwist1 = stanGdzieMoznaObracacWarstwami
-    // mirrored1 = dokonywanieLustrzanegoOdbicia
-    // editable1 = dokonywanieZmianNaKostce
-    // twisting1 = dokonywanieObrotuWarstwy
-    // dragging1 = przeciaganie
     private boolean stanObojetny = true; // kostka jest w bezruchu, żadna warstwa niej jest obracana
     private boolean stanGdzieMoznaObracacWarstwami; // layer can be twisted
     private boolean dokonywanieLustrzanegoOdbicia; // mirroring of the kostka view
@@ -148,28 +115,15 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
 
 
     //private double scale; // kostka scale
-    // align = ustawienieKostki
     private int ustawienieKostki; // kostka alignment (top, center, bottom)
 
 
     // ruch sequence data
-    // move1 = ruch
-    // curMove1 = poruszanie
-    // movePos1 = torRuchu
-    // moveDir1 = kierunekRuchu
-
 
     private int torRuchu;
 
 
-    // state of buttons
-    // buttonBar = PasekPrzyciskow
-    // buttonHeight = wysokoscPrzyciskow
-    // drawButtons1 = tworzeniePrzyciskow
-    // pushed1 = przycisniecie
-    // buttonPressed1 = wcisnietyPrzycisk
-    // progressHeight1 = zmianaWysokosci
-    private int PasekPrzyciskow; // button bar mode
+    private int PasekPrzyciskow;
     private int wysokoscPrzyciskow;
     private boolean tworzeniePrzyciskow = true;
     private boolean przycisniecie;
@@ -178,20 +132,13 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
 
 
     // private int textHeight;
-    //Random generator = new Random();
-    //private boolean outlined = true;
-
     // buffer to store hexa-digits
-    //private final int[] hex = new int[6];
-
 
     public void init() {
-
 
         // register to receive all mouse events
         addMouseListener(this);
         addMouseMotionListener(this);
-
 
         // setup barwy
         barwy[0] = new Color(255, 84, 0);   // 0 -   orange
@@ -201,52 +148,27 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
         barwy[4] = new Color(255, 255, 255);  // 4 - white
         barwy[5] = new Color(255, 255, 0);   // 5 - yellow
 
-
         // setup default configuration
-        // param = wspolczynnikKonfiguracji
-
         String wspolczynnikKonfiguracji = getParameter("konfiguracja");
         kolorTla = Color.DARK_GRAY;
         przyciskKoloruTla = kolorTla;
 
-
         // clean the kostka
         for (int i = 0; i < 6; i++)
             for (int j = 0; j < 9; j++) {
-                //int k = generator.nextInt(9);
                 kostka[i][j] = i;
             }
 
-
         // setup ruch sequence (and info texts)
-
-
         wspolczynnikKonfiguracji = getParameter("ruch");
-
         torRuchu = 0;
-
 
         // appearance and configuration of the button bar
         PasekPrzyciskow = 1;
         wysokoscPrzyciskow = 13;
         wektorNormalny(mnozenieWektorow(widokPionowy, obserwator, widokBokiem)); // fix widokPionowy
 
-
-        //zmianaWysokosci = ruch.length == 0 ? 0 : 6;
-
-
-
-        /* COS SIE ODJANIEPAWLILO */
-        //wspolczynnikKonfiguracji = getParameter("buttonbar");
-       /* if ("0".equals(wspolczynnikKonfiguracji)) {
-            PasekPrzyciskow = 0;
-            wysokoscPrzyciskow = 0;
-        }*/
-
-
         // whether the kostka can be edited with mouse
-        //wspolczynnikKonfiguracji = getParameter("edit");
-
         if ("0".equals(wspolczynnikKonfiguracji))
             dokonywanieZmianNaKostce = false;
         else
@@ -266,7 +188,6 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
                 ustawienieKostki = 2;
         }
 
-
         // setup initial values
         for (int i = 0; i < 6; i++)
             for (int j = 0; j < 9; j++)
@@ -277,9 +198,8 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
             wstepnyWidokBokiem[i] = widokBokiem[i];
             wstepnyWidokPionowy[i] = widokPionowy[i];
         }
-    }// init()
+    }
 
-    // parameter = stala
     public String getParameter(String name) {
         String stala = super.getParameter(name);
         if (stala == null)
@@ -288,9 +208,6 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
         return stala;
     }
 
-
-    // realMoveLength1 = dlugoscRuchuTeraz
-    // move = przesuwanie
     private static int dlugoscRuchuTeraz(int[] przesuwanie) {
         int length = 0;
         for (int i = 0; i < przesuwanie.length; i++)
@@ -299,10 +216,6 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
         return length;
     }
 
-
-    // realMovePos = torRuchuTeraz
-    // move = przesuwanie
-    // pos = stan
     private static int torRuchuTeraz(int[] przesuwanie, int stan) {
         int pozyc = 0;
         for (int i = 0; i < stan; i++)
@@ -310,7 +223,6 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
                 pozyc++;
         return pozyc;
     }
-
 
     private void clear() {
         torRuchu = 0;
@@ -326,9 +238,7 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
 
     }
 
-
     // kostka dimensions in number of facelets (mincol, maxcol, minrow, maxrow) for compact kostka
-    // klockiKostkiNieruchomej = klockiKostkiNieruchomej
     private static final int[][][] klockiKostkiNieruchomej = {
             {{0, 3}, {0, 3}}, // U
             {{0, 3}, {0, 3}}, // D
@@ -338,22 +248,12 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
             {{0, 3}, {0, 3}}  // R
     };
 
-
     // subcube dimensions
-    // topBlocks = klockiGorne
-    // midBlocks = klockiSrodkowe
-    // botBlocks1 = klockiDolne
     private final int[][][] klockiGorne = new int[6][][];
     private final int[][][] klockiSrodkowe = new int[6][][];
     private final int[][][] klockiDolne = new int[6][][];
 
-
     // all possible subcube dimensions for top and bottom layers
-    // topBlockTable1 = daneKlockowGornych
-    // midBlockTable1 = daneKlockowSrodkowych
-    // topBlockFaceDim1 = wymiaryKlockowGornych
-    // midBlockFaceDim1 = wymiaryKlockowSrodkowych
-    // botBlockFaceDim1 = wymiaryKlockowDolnych
     private static final int[][][] daneKlockowGornych = {
             {{0, 0}, {0, 0}},
             {{0, 3}, {0, 3}},
@@ -362,12 +262,14 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
             {{0, 3}, {2, 3}},
             {{2, 3}, {0, 3}}
     };
+
     // subcube dimmensions for middle layers
     private static final int[][][] daneKlockowSrodkowych = {
             {{0, 0}, {0, 0}},
             {{0, 3}, {1, 2}},
             {{1, 2}, {0, 3}}
     };
+
     // indices to daneKlockowGornych[] and botBlockTable[] for each warstwaObracana value
     private static final int[][] wymiaryKlockowGornych = {
             // U  D  F  B  L  R
@@ -378,6 +280,7 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
             {3, 2, 2, 4, 1, 0}, // L
             {5, 4, 4, 2, 0, 1}  // R
     };
+
     private static final int[][] wymiaryKlockowSrodkowych = {
             // U  D  F  B  L  R
             {0, 0, 2, 2, 1, 2}, // U
@@ -387,6 +290,7 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
             {2, 1, 1, 1, 0, 0}, // L
             {2, 1, 1, 1, 0, 0}  // R
     };
+
     private static final int[][] wymiaryKlockowDolnych = {
             // U  D  F  B  L  R
             {0, 1, 5, 5, 4, 5}, // U
@@ -397,9 +301,6 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
             {3, 2, 2, 4, 1, 0}  // R
     };
 
-
-    // splitCube = warstwyKostki
-    // layer1 = warstwa
     private void warstwyKostki(int warstwa) {
         for (int i = 0; i < 6; i++) { // dla wszystkich scian
             klockiGorne[i] = daneKlockowGornych[wymiaryKlockowGornych[warstwa][i]];
@@ -409,13 +310,6 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
         stanObojetny = false;
     }
 
-
-    // twistLayers = obracanieWarstw
-    // cube1 = kostka
-    // layer1 = warstwa
-    // num1 = liczbaPorzadkowa
-    // mode1 = stan
-    // twistLayer = obracanieWarstwy
     private void obracanieWarstw(int[][] kostka, int warstwa, int liczbaPorzadkowa, int stan) {
         switch (stan) {
             case 3:
@@ -436,13 +330,7 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
         }
     }
 
-
     // top facelet cycle
-    // cycleOrder = kolejnoscOkresu
-    // cycleFactors = stopnieOkresu
-    // cycleOffsets1 = rozstawienieOkresu
-    // cycleLayerSides1 = warstwyBoczneOkresu
-    // cycleCenters1 = srodekOkresu
     private static final int[] kolejnoscOkresu = {0, 1, 2, 5, 8, 7, 6, 3};
     // side facelet cycle offsets
     private static final int[] stopnieOkresu = {1, 3, -1, -3, 1, 3, -1, -3};
@@ -456,6 +344,7 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
             {3, 2, 0, 0}, // L: U=6-3k B=8-k  D=k    F=k
             {2, 2, 0, 1}  // R: F=8-k  D=8-k  B=k    U=2+3k
     };
+
     // indices for sides of center layers
     private static final int[][] srodekOkresu = {
             {7, 7, 7, 4}, // E'(U): F=7-3k R=7-3k B=7-3k L=3+k
@@ -466,15 +355,8 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
             {6, 6, 4, 5}  // M'(R): F=5-k  D=5-k  B=3+k  U=1+3k
     };
 
-
-    // twistBuffer1 = zmianaBuforu
     private final int[] zmianaBuforu = new int[12];
 
-
-    // cube1 = kostka
-    // layer1 = warstwa
-    // num1 = liczbaPorzadkowa
-    // middle = srodek
     private void obracanieWarstwy(int[][] kostka, int warstwa, int liczbaPorzadkowa, boolean srodek) {
         if (!srodek) {
             // rotate top facelets
@@ -483,6 +365,7 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
             for (int i = 0; i < 8; i++) // to kostka
                 kostka[warstwa][kolejnoscOkresu[i]] = zmianaBuforu[i];
         }
+
         // rotate side facelets
         int z = liczbaPorzadkowa * 3;
         for (int i = 0; i < 4; i++) { // to buffer
@@ -495,13 +378,14 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
                 z++;
             }
         }
-        z = 0; // MS VM JIT bug if placed into the loop init
+
+        z = 0;
         for (int i = 0; i < 4; i++) { // to kostka
             int x = scianyPrzylegle[warstwa][i];
             int y = srodek ? srodekOkresu[warstwa][i] : warstwyBoczneOkresu[warstwa][i];
             int stopien = stopnieOkresu[y];
             int rozstaw = rozstawienieOkresu[y];
-            //int j = 0; // MS VM JIT bug if for is used
+
             for (int j = 0; j < 3; j++) {
                 kostka[x][j * stopien + rozstaw] = zmianaBuforu[z];
                 z++;
@@ -509,42 +393,23 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
         }
     }
 
-
     // double buffered animation
-    // graphics = tekstury
-    // image1 = obraz
     private Graphics tekstury = null;
     private Image obraz = null;
 
-
     // kostka window size (applet window is resizable)
-    // width = szerokosc
-    // height1 = wysokosc
     private int szerokosc;
     private int wysokosc;
 
-
     // last position of mouse (for przeciaganie the kostka)
-    // lastX = wczesniejszaWspolrzednaX
-    // lastY1 = wczesniejszaWspolrzednaY
     private int wczesniejszaWspolrzednaX;
     private int wczesniejszaWspolrzednaY;
 
-
     // last position of mouse (when waiting for clear decission)
-    // lastDragX = wcześniejszePolozenieMyszyNaX
-    // lastDragY1 = wcześniejszePolozenieMyszyNaY
     private int wcześniejszePolozenieMyszyNaX;
     private int wcześniejszePolozenieMyszyNaY;
 
-
     // drag areas
-    // dragAreas1 = obszarPrzeciaganiaMysza
-    // dragCornersX1 = przeciaganieNaroznikowNaX
-    // dragCornersY1 = przeciaganieNaroznikowNaY
-    // dragDirsX1 = kierunekPrzeciaganiaNaX
-    // dragDirsY1 = kierunekPrzeciaganiaNaY
-    // dragBlocks1 = przeciaganieKlockow
     private int obszarPrzeciaganiaMysza;
     private final int[][] przeciaganieNaroznikowNaX = new int[18][4];
     private final int[][] przeciaganieNaroznikowNaY = new int[18][4];
@@ -560,9 +425,6 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
             {{2, 0}, {2, 3}, {1, 3}, {1, 0}}
     };
 
-
-    // kierunkiPola =
-    // kierunkiObrotu =
     private static final int[][] kierunkiPola = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}, {1, 0}, {0, 1}};
     private static final int[][] kierunkiObrotu = {
             {1, 1, 1, 1, 1, -1}, // U
@@ -573,25 +435,14 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
             {1, -1, 1, -1, 1, 1}  // R
     };
 
-
-    // dragLayers1 = przeciaganeWarstwy
-    // dragModes1 = trybyPrzeciaganychWarstw
     private int[] przeciaganeWarstwy = new int[18]; // which layers belongs to dragCorners
     private int[] trybyPrzeciaganychWarstw = new int[18]; // which layer modes dragCorners
 
-
     // current drag directions
-    // dragX1 = przeciaganiePoX
-    // dragY1 = przeciaganiePoY
     private double przeciaganiePoX;
     private double przeciaganiePoY;
 
-
     // various sign tables for computation of directions of rotations
-    // rotCos1 = odwracanieCosinusa
-    // rotSin1 = odwracanieSinusa
-    // rotVec1 = odwracanieWektora
-    // rotSign1 = odwracanieZnaku
     private static final int[][][] odwracanieCosinusa = {
             {{1, 0, 0}, {0, 0, 0}, {0, 0, 1}}, // U-D
             {{1, 0, 0}, {0, 1, 0}, {0, 0, 0}}, // F-B
@@ -608,35 +459,24 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
             {{1, 0, 0}, {0, 0, 0}, {0, 0, 0}}  // L-R
     };
 
-
     private static final int[] odwracanieZnaku = {1, -1, 1, -1, 1, -1}; // U, D, F, B, L, R
 
-
     // temporary obserwator vectors for twisted sub-kostka rotation
-
     private double[] tymczasowyObserwator = new double[3];
     private double[] tymczasowyWidokNaX = new double[3];
     private double[] tymczasowyWidokNaY = new double[3];
 
-
     // temporary obserwator vectors for second twisted sub-kostka rotation (antislice)
-
     private double[] tymczasowyDrugiObserwator = new double[3];
     private double[] tymczasowyDrugiWidokNaX = new double[3];
     private final double[] tymczasowyDrugiWidokNaY = new double[3];
 
-
     // temporary vectors to compute visibility in perspective projection
-
     private double[] punktWidzenia1 = new double[3];
     private double[] punktWidzenia2 = new double[3];
     private double[] widokNormalny = new double[3];
 
-
     // obserwator arrays to store various eyes for various modes
-    // eyeOrder1 = kolejnoscObserwatorow
-    // blockMode1 = trybKlockow
-    // drawOrder1 = tworzenieUporzadkowania
     private double[][] ustawienieObserwatora = new double[3][];
     private double[][] ustawienieWidokuNaX = new double[3][];
     private double[][] ustawienieWidokuNaY = new double[3][];
@@ -645,12 +485,8 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
     private int[][] trybKlockow = {{0, 2, 2}, {2, 1, 2}, {2, 2, 2}, {2, 2, 2}, {2, 2, 2}, {2, 2, 2}};
     private int[][] tworzenieUporzadkowania = {{0, 1, 2}, {2, 1, 0}, {0, 2, 1}};
 
-
-    // size1 = rozmiar
     public void paint(Graphics g) {
-
         Dimension rozmiar = getSize(); // inefficient - Java 1.1
-
 
         // create offscreen buffer for double buffering
         if (obraz == null || rozmiar.width != szerokosc || rozmiar.height - wysokoscPrzyciskow != wysokosc) {
@@ -664,23 +500,14 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
             tworzeniePrzyciskow = true;
         }
 
-
         tekstury.setColor(kolorTla);
         tekstury.setClip(0, 0, szerokosc, wysokosc);
         tekstury.fillRect(0, 0, szerokosc, wysokosc);
 
         obszarPrzeciaganiaMysza = 0;
 
-
-        // fixblock1 = ustalanieKlocka
         if (stanObojetny) // compact kostka
             ustalanieKlocka(obserwator, widokBokiem, widokPionowy, klockiKostkiNieruchomej, 3); // draw kostka and fill drag areas
-
-
-            // tempEye = tymczasowyObserwator
-            // tempEyeX = tymczasowyWidokNaX
-            // tempEye21 = tymczasowyDrugiObserwator
-            // tempEyeX21 = tymczasowyDrugiWidokNaX
 
         else {
 
@@ -700,9 +527,8 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
                 i++;
             }
 
-
-            // vMul1 = mnozenieWektorow
             mnozenieWektorow(tymczasowyWidokNaY, tymczasowyObserwator, tymczasowyWidokNaX);
+
             // compute bottom anti-observer
             double cosB = Math.cos(katPrzedObrotem - katPoObrocie);
             double sinB = Math.sin(katPrzedObrotem - katPoObrocie) * odwracanieZnaku[warstwaObracana];
@@ -716,13 +542,6 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
                 }
             }
 
-
-            // eyeArray1 = ustawienieObserwatora
-            // eyeArrayX1 = ustawienieWidokuNaX
-            // eyeArrayY1 = ustawienieWidokuNaY
-            // blockArray1 = ustawienieKlockow
-            // tempEyeY1 = tymczasowyWidokNaY
-            // tempEyeY21 = tymczasowyDrugiWidokNaY
             mnozenieWektorow(tymczasowyDrugiWidokNaY, tymczasowyDrugiObserwator, tymczasowyDrugiWidokNaX);
             ustawienieObserwatora[0] = obserwator;
             ustawienieWidokuNaX[0] = widokBokiem;
@@ -737,18 +556,7 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
             ustawienieKlockow[1] = klockiSrodkowe;
             ustawienieKlockow[2] = klockiDolne;
 
-
             // perspective corrections
-            // perspEye1 = punktWidzenia1
-            // perspNormal1 = widokNormalny
-            // perspEyeI1 = punktWidzenia2
-            // vSub = odejmowanieWektorow
-            // vScale1 = skalowanieWektorow
-            // vCopy1 = kopiowanieWektorow
-            // vProd1 = tworzenieWektorow
-            // topProd1 = tworzenieGornych
-            // botProd1 = tworzenieDolnych
-            // orderMode1 = trybPorzadkowania
             odejmowanieWektorow(skalowanieWektorow(kopiowanieWektorow(punktWidzenia1, obserwator), 5.0), skalowanieWektorow(kopiowanieWektorow(widokNormalny, wektoryNormalneScianKostki[warstwaObracana]), 1.0 / 3.0));
             odejmowanieWektorow(skalowanieWektorow(kopiowanieWektorow(punktWidzenia2, obserwator), 5.0), skalowanieWektorow(kopiowanieWektorow(widokNormalny, wektoryNormalneScianKostki[warstwaObracana ^ 1]), 1.0 / 3.0));
             double tworzenieGornych = tworzenieWektorow(punktWidzenia1, wektoryNormalneScianKostki[warstwaObracana]);
@@ -776,39 +584,16 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
                     ustawienieKlockow[tworzenieUporzadkowania[trybPorzadkowania][2]],
                     trybKlockow[obracanie][tworzenieUporzadkowania[trybPorzadkowania][2]]);
         }
-
-
-        if (!przycisniecie) // no button should be deceased
-            wcisnietyPrzycisk = -1;
-
-        if (tworzeniePrzyciskow && PasekPrzyciskow != 0) // omit unneccessary redrawing
-            tworzeniePrzyciskow(tekstury);
-        /*****************************************************************************************
-         * na połówkowy do wyjebania
-         if (tworzeniePrzyciskow && PasekPrzyciskow != 0) // omit unneccessary redrawing
-         tworzeniePrzyciskow(tekstury);
-         ***********************************************************************************/
-
         g.drawImage(obraz, 0, 0, this);
-    } // paint()
+    }
 
     public void update(Graphics g) {
         paint(g);
     }
 
-
     // polygon co-ordinates to fill (kostka faces or facelets)
-    // fillX = wypelnijNaX
-    // fillY1 = wypelnijNaY
-    // coordsX1 = wspolrzedneX
-    // coordsY1 = wspolrzedneY
-    // cooX1 = koordynatyXowe
-    // cooY1 = koordynatyYkowe
-    // border1 = granica
-    // factors1 = stopnie
     private final int[] wypelnijNaX = new int[4];
     private final int[] wypelnijNaY = new int[4];
-
 
     // projected vertex co-ordinates (to screen)
     private final double[] wspolrzedneX = new double[8];
@@ -818,15 +603,9 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
     private static final double[][] granica = {{0.02, 0.02}, {0.98, 0.02}, {0.98, 0.98}, {0.02, 0.98}};
     private static final int[][] stopnie = {{0, 0}, {0, 1}, {1, 1}, {1, 0}};
 
-
     private void ustalanieKlocka(double[] eye, double[] eyeX, double[] eyeY, int[][][] klocki, int tryb) {
 
-
         // project 3D co-ordinates into 2D screen ones
-        // min1 = wartoscMinimalna
-        // x1 = wspX
-        // y1 = wspY
-        // z1 = wspZ
         for (int i = 0; i < 8; i++) {
             double wartoscMinimalna = szerokosc < wysokosc ? szerokosc : wysokosc - zmianaWysokosci;
             double wspX = wartoscMinimalna / 3.7 * tworzenieWektorow(wspolrzedneNaroznikowKostki[i], eyeX);
@@ -842,6 +621,8 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
             else
                 wspolrzedneY[i] = (wysokosc - zmianaWysokosci) / 2.0 - wspY;
         }
+
+
         // setup corner co-ordinates for all faces
         for (int i = 0; i < 6; i++) { // all faces
             for (int j = 0; j < 4; j++) { // all face corners
@@ -851,10 +632,6 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
         }
 
         // draw black antialias
-        // sideW = bocznaSzerokosc
-        // sideH = bocznaWysokosc
-        // klocki = klocki
-        // getCorners = pobierzNarozniki
         for (int i = 0; i < 6; i++) { // all faces
             int bocznaSzerokosc = klocki[i][0][1] - klocki[i][0][0];
             int bocznaWysokosc = klocki[i][1][1] - klocki[i][1][0];
@@ -869,10 +646,7 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
             }
         }
 
-
         // find and draw black inner faces
-        // sideW1 = bocznaSzerokosc
-        // sideH1 = bocznaWysokosc
         for (int i = 0; i < 6; i++) { // all faces
             int bocznaSzerokosc = klocki[i][0][1] - klocki[i][0][0];
             int bocznaWysokosc = klocki[i][1][1] - klocki[i][1][0];
@@ -888,7 +662,6 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
                 tekstury.fillPolygon(wypelnijNaX, wypelnijNaY, 4);
             } else {
 
-
                 // draw black face background (do not care about normals and visibility!)
                 for (int j = 0; j < 4; j++) // corner co-ordinates
                     pobierzNarozniki(i, j, wypelnijNaX, wypelnijNaY, klocki[i][0][stopnie[j][0]], klocki[i][1][stopnie[j][1]], dokonywanieLustrzanegoOdbicia);
@@ -896,9 +669,8 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
                 tekstury.fillPolygon(wypelnijNaX, wypelnijNaY, 4);
             }
         }
+
         // draw all visible faces and get przeciaganie regions
-        // sideW1 = bocznaSzerokosc
-        // sideH1 = bocznaWysokosc
         for (int a = 0; a < 6; a++) { // all faces
             odejmowanieWektorow(skalowanieWektorow(kopiowanieWektorow(punktWidzenia1, eye), 5.0), wektoryNormalneScianKostki[a]); // perspective correction
             if (tworzenieWektorow(punktWidzenia1, wektoryNormalneScianKostki[a]) > 0) { // draw only faces towards us
@@ -919,14 +691,6 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
                 }
 
                 // horizontal and vertical directions of face - interpolated
-                // dxh1 = kierunekPoziomyNaX
-                // dyh1 = kierunekPoziomyNaY
-                // dxv1 = kierunekPionowyNaX
-                // dyv1 = kierunekPionowyNaY
-                // mode1 = tryb
-                // areaDirs1 = kierunkiPola
-                // twistDirs1 = kierunkiObrotu
-                //
                 double kierunekPoziomyNaX = (koordynatyXowe[a][1] - koordynatyXowe[a][0] + koordynatyXowe[a][2] - koordynatyXowe[a][3]) / 6.0;
                 double kierunekPoziomyNaY = (koordynatyXowe[a][3] - koordynatyXowe[a][0] + koordynatyXowe[a][2] - koordynatyXowe[a][1]) / 6.0;
                 double kierunekPionowyNaX = (koordynatyYkowe[a][1] - koordynatyYkowe[a][0] + koordynatyYkowe[a][2] - koordynatyYkowe[a][3]) / 6.0;
@@ -946,7 +710,8 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
                         if (obszarPrzeciaganiaMysza == 18)
                             break;
                     }
-                } else if (tryb == 0) { // twistable top layer
+                }
+                else if (tryb == 0) { // twistable top layer
                     if (a != warstwaObracana && bocznaSzerokosc > 0 && bocznaWysokosc > 0) { // only 3x1 faces
                         int j = bocznaSzerokosc == 3 ? (klocki[a][1][0] == 0 ? 0 : 2) : (klocki[a][0][0] == 0 ? 3 : 1);
                         for (int k = 0; k < 4; k++)
@@ -958,7 +723,8 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
                         trybyPrzeciaganychWarstw[obszarPrzeciaganiaMysza] = 0;
                         obszarPrzeciaganiaMysza++;
                     }
-                } else if (tryb == 1) { // twistable center layer
+                }
+                else if (tryb == 1) { // twistable center layer
                     if (a != warstwaObracana && bocznaSzerokosc > 0 && bocznaWysokosc > 0) { // only 3x1 faces
                         int j = bocznaSzerokosc == 3 ? 4 : 5;
                         for (int k = 0; k < 4; k++)
@@ -975,19 +741,6 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
         }
     }
 
-
-    // face1 = sciana
-    // corner1 = naroznik
-    // cornersX1 = naroznikWspX
-    // cornersY1 = naroznikWspY
-    // factor11 = czynnikPierwszy
-    // factor21 = czynnikDrugi
-    // mirror1 = lustro
-    // x11 = pierwszaWspNaX
-    // y11 = pierwszaWspNaY
-    // x21 = drugaWspNaX
-    // y21 = drugaWspNaY
-    //
     private void pobierzNarozniki(int sciana, int naroznik, int[] naroznikWspX, int[] naroznikWspY, double czynnikPierwszy, double czynnikDrugi, boolean lustro) {
         czynnikPierwszy /= 3.0;
         czynnikDrugi /= 3.0;
@@ -1001,7 +754,7 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
             naroznikWspX[naroznik] = szerokosc - naroznikWspX[naroznik];
     }
 
-    private void tworzeniePrzyciskow(Graphics g) {
+   /* private void tworzeniePrzyciskow(Graphics g) {
 
         // full buttonbar
         g.setClip(0, wysokosc, szerokosc, wysokoscPrzyciskow);
@@ -1010,140 +763,30 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
             int buttonWidth = (szerokosc - buttonX) / (4 - i);
             g.setColor(przyciskKoloruTla);
             g.fill3DRect(buttonX, wysokosc, buttonWidth, wysokoscPrzyciskow, wcisnietyPrzycisk != i);
-            //drawButton(g, i, buttonX + buttonWidth / 2, wysokosc + wysokoscPrzyciskow / 2);
             buttonX += buttonWidth;
         }
         tworzeniePrzyciskow = false;
         return;
 
-    }
-
-    /*private void drawButton(Graphics g, int i, int x, int y) {
-        g.setColor(Color.white);
-        switch (i) {
-            case 0: // rewind
-                drawRect(g, x - 2, y - 3, 3, 7);
-                break;
-            case 1: // reverse step
-                drawRect(g, x + 2, y - 3, 3, 7);
-                drawArrow(g, x, y, -1); // left
-                break;
-            case 2: // mirror
-                drawRect(g, x - 3, y - 2, 7, 5);
-                drawRect(g, x - 1, y - 4, 3, 9);
-            case 3:
-                drawRect(g, x + 3, y - 3, 3, 7);
-                break;
-
-        }
-    }
-*/
-   /* private static void drawArrow(Graphics g, int x, int y, int dir) {
-        g.setColor(Color.black);
-        g.drawLine(x, y - 3, x, y + 3);
-        x += dir;
-        for (int i = 0; i >= -3 && i <= 3; i += dir) {
-            int j = 3 - i * dir;
-            g.drawLine(x + i, y + j, x + i, y - j);
-        }
-        g.setColor(Color.white);
-        for (int i = 0; i >= -1 && i <= 1; i += dir) {
-            int j = 1 - i * dir;
-            g.drawLine(x + i, y + j, x + i, y - j);
-        }
-    }
-
-    private static void drawRect(Graphics g, int x, int y, int width, int height) {
-        g.setColor(Color.black);
-        g.drawRect(x, y, width - 1, height - 1);
-        g.setColor(Color.white);
-        g.fillRect(x + 1, y + 1, width - 2, height - 2);
-    }
-
-    public static void shuffle(int[][] matrix, int columns, Random random) {
-        int size = matrix.length * columns;
-        for (int i = size; i > 1; i--)
-            swap(matrix, columns, i - 1, random.nextInt(i));
-    }
-
-    public static void swap(int[][] matrix, int columns, int i, int j) {
-        double tmp = matrix[i / columns][i % columns];
-        matrix[i / columns][i % columns] = matrix[j / columns][j % columns];
-        matrix[j / columns][j % columns] = (int) tmp;
-    }
-*/
-    //private static final int[] textOffset = {1, 1, -1, -1, -1, 1, 1, -1, -1, 0, 1, 0, 0, 1, 0, -1};
-
-
-    /*
-    private int selectButton(int x, int y) {
-        if (PasekPrzyciskow == 0)
-            return -1;
-        if ( x >= szerokosc - wysokoscPrzyciskow && x < szerokosc && y >= 0 && y < wysokoscPrzyciskow)
-            return 3;
-        if (PasekPrzyciskow == 2) { // only clear (rewind) button present
-            if (x >= 0 && x < wysokoscPrzyciskow && y >= wysokosc - wysokoscPrzyciskow && y < wysokosc)
-                return 0;
-            return -1;
-        }
-
-        if (PasekPrzyciskow == 3){
-            return -1;
-
-        }
-        if (y < wysokosc)
-            return -1;
-        int buttonX = 0;
-        for (int i = 0; i < 4; i++) {
-            int buttonWidth = (szerokosc - buttonX) / (4 - i);
-            if (x >= buttonX && x < buttonX + buttonWidth && y >= wysokosc && y < wysokosc + wysokoscPrzyciskow)
-                return i;
-            buttonX += buttonWidth;
-        }
-        return -1;
-    }
-*/
-
+    }*/
 
     // Mouse event handlers
     public void mousePressed(MouseEvent e) {
+        
         wcześniejszePolozenieMyszyNaX = wczesniejszaWspolrzednaX = e.getX();
         wcześniejszePolozenieMyszyNaY = wczesniejszaWspolrzednaY = e.getY();
         stanGdzieMoznaObracacWarstwami = false;
-        //wcisnietyPrzycisk = selectButton(wczesniejszaWspolrzednaX, wczesniejszaWspolrzednaY);
-        if (wcisnietyPrzycisk >= 0) {
-            przycisniecie = true;
-            if (wcisnietyPrzycisk == 2) {
-                dokonywanieLustrzanegoOdbicia = !dokonywanieLustrzanegoOdbicia;
-            } else if (wcisnietyPrzycisk == 0) { // clear everything to the initial setup
-                clear();
-            }
-            // else if (wcisnietyPrzycisk == 1){
-            //}
-            else if (wcisnietyPrzycisk == 3) {
-                //shuffle(kostka, 9, new Random(9));
-            } else
-                tworzeniePrzyciskow = true;
-            repaint();
-            /**************************************************************************************************************************/
-        } else {
-            if (zmianaWysokosci > 0 && wczesniejszaWspolrzednaY >= wysokosc - zmianaWysokosci && wczesniejszaWspolrzednaY < wysokosc) {
 
+        if (zmianaWysokosci > 0 && wczesniejszaWspolrzednaY >= wysokosc - zmianaWysokosci && wczesniejszaWspolrzednaY < wysokosc) {
                 repaint();
-            } else {
-                if (dokonywanieLustrzanegoOdbicia)
-                    wcześniejszePolozenieMyszyNaX = wczesniejszaWspolrzednaX = szerokosc - wczesniejszaWspolrzednaX;
-                if (dokonywanieZmianNaKostce &&
-                        (e.getModifiers() & InputEvent.BUTTON1_MASK) != 0 &&
-                        (e.getModifiers() & InputEvent.SHIFT_MASK) == 0)
+            }
+        else {
+                if (dokonywanieZmianNaKostce && (e.getModifiers() & InputEvent.BUTTON1_MASK) != 0 && (e.getModifiers() & InputEvent.SHIFT_MASK) == 0)
                     stanGdzieMoznaObracacWarstwami = true;
             }
-        }
+
     }
 
-
-    // angle = kat
-    // num = liczba
     public void mouseReleased(MouseEvent e) {
         przeciaganie = false;
         if (przycisniecie) {
@@ -1172,31 +815,17 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
 
     private final double[] eyeD = new double[3];
 
-
-    // x1 = wspXObecna
-    // y1 = wspYObecna
-    // dx1 = wspXPrzed
-    // dy1 = wspYPrzed
-    // d11 = zmiennaKierunkowa1
-    // d21 = zmiennaKierunkowa2
-    // x2 = drugaWspX
-    // y2 = drugaWspY
     public void mouseDragged(MouseEvent e) {
-
-
-        //if (przycisniecie)
-        //    return;
-
 
         int polozenieX = dokonywanieLustrzanegoOdbicia ? szerokosc - e.getX() : e.getX();
         int polozenieY = e.getY();
         int wspXPrzed = polozenieX - wczesniejszaWspolrzednaX;
         int wspYPrzed = polozenieY - wczesniejszaWspolrzednaY;
 
-
         if (dokonywanieZmianNaKostce && stanGdzieMoznaObracacWarstwami && !dokonywanieObrotuWarstwy) { // we do not twist but we can
             wcześniejszePolozenieMyszyNaX = polozenieX;
             wcześniejszePolozenieMyszyNaY = polozenieY;
+
             for (int i = 0; i < obszarPrzeciaganiaMysza; i++) { // check if inside a drag area
                 double zmiennaKierunkowa1 = przeciaganieNaroznikowNaX[i][0];
                 double wspXObecna = przeciaganieNaroznikowNaX[i][1] - zmiennaKierunkowa1;
@@ -1206,6 +835,7 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
                 double drugaWspY = przeciaganieNaroznikowNaY[i][3] - zmiennaKierunkowa2;
                 double a = (drugaWspY * (wczesniejszaWspolrzednaX - zmiennaKierunkowa1) - wspYObecna * (wczesniejszaWspolrzednaY - zmiennaKierunkowa2)) / (wspXObecna * drugaWspY - wspYObecna * drugaWspX);
                 double b = (-drugaWspX * (wczesniejszaWspolrzednaX - zmiennaKierunkowa1) + wspXObecna * (wczesniejszaWspolrzednaY - zmiennaKierunkowa2)) / (wspXObecna * drugaWspY - wspYObecna * drugaWspX);
+
                 if (a > 0 && a < 1 && b > 0 && b < 1) { // we are in
                     if (wspXPrzed * wspXPrzed + wspYPrzed * wspYPrzed < 144) // delay the decision about dokonywanieObrotuWarstwy
                         return;
@@ -1220,24 +850,24 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
                     }
                 }
             }
+
             stanGdzieMoznaObracacWarstwami = false;
             wczesniejszaWspolrzednaX = wcześniejszePolozenieMyszyNaX;
             wczesniejszaWspolrzednaY = wcześniejszePolozenieMyszyNaY;
         }
 
-
         wspXPrzed = polozenieX - wczesniejszaWspolrzednaX;
         wspYPrzed = polozenieY - wczesniejszaWspolrzednaY;
 
-
         if (!dokonywanieObrotuWarstwy) { // whole kostka rotation
-            wektorNormalny(vAdd(obserwator, skalowanieWektorow(kopiowanieWektorow(eyeD, widokBokiem), wspXPrzed * -0.0016)));
+            wektorNormalny(dodawanieWektorow(obserwator, skalowanieWektorow(kopiowanieWektorow(eyeD, widokBokiem), wspXPrzed * -0.0016)));
             wektorNormalny(mnozenieWektorow(widokBokiem, widokPionowy, obserwator));
-            wektorNormalny(vAdd(obserwator, skalowanieWektorow(kopiowanieWektorow(eyeD, widokPionowy), wspYPrzed * 0.0016)));
+            wektorNormalny(dodawanieWektorow(obserwator, skalowanieWektorow(kopiowanieWektorow(eyeD, widokPionowy), wspYPrzed * 0.0016)));
             wektorNormalny(mnozenieWektorow(widokPionowy, obserwator, widokBokiem));
             wczesniejszaWspolrzednaX = polozenieX;
             wczesniejszaWspolrzednaY = polozenieY;
-        } else {
+        }
+        else {
             if (stanObojetny)
                 warstwyKostki(warstwaObracana);
             katPoObrocie = 0.005 * (przeciaganiePoX * wspXPrzed + przeciaganiePoY * wspYPrzed) / Math.sqrt(przeciaganiePoX * przeciaganiePoX + przeciaganiePoY * przeciaganiePoY); // dv * cos a
@@ -1247,34 +877,10 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
         repaint();
     }
 
-
-    // status bar help strings
-    private static final String[] buttonDescriptions = {
-            "Stan początkowy",
-            "Cofnij ruch",
-            "Odbicie lustrzane",
-            "Tasuj",
-
-    };
-    private String buttonDescription = "";
-
     public void mouseMoved(MouseEvent e) {
         int a = e.getX();
         int b = e.getY();
-        String description = "Przesuń kostkę myszką";
-        if (a >= 0 && a < szerokosc) {
-            if (b >= wysokosc && b < wysokosc + wysokoscPrzyciskow || b >= 0 && b < wysokoscPrzyciskow) {
-                //wcisnietyPrzycisk = selectButton(a, b);
-                if (wcisnietyPrzycisk >= 0)
-                    description = buttonDescriptions[wcisnietyPrzycisk];
-
-            }
         }
-        if (description != buttonDescription) {
-            buttonDescription = description;
-            showStatus(description);
-        }
-    }
 
     public void mouseClicked(MouseEvent e) {
     }
@@ -1285,8 +891,7 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
     public void mouseExited(MouseEvent e) {
     }
 
-    // Various useful vector functions
-
+    /*************************FUNKCJE WYKONYWANE NAD WEKTORAMI******************************/
     private static double[] kopiowanieWektorow(double[] vector, double[] srcVec) {
         vector[0] = srcVec[0];
         vector[1] = srcVec[1];
@@ -1294,19 +899,14 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
         return vector;
     }
 
-
-    // vector1 = wektor
-    // vNorm = wektorNormalny
     private static double[] wektorNormalny(double[] wektor) {
-        double length = Math.sqrt(tworzenieWektorow(wektor, wektor));
-        wektor[0] /= length;
-        wektor[1] /= length;
-        wektor[2] /= length;
+        double dlugoscWektora = Math.sqrt(tworzenieWektorow(wektor, wektor));
+        wektor[0] /= dlugoscWektora;
+        wektor[1] /= dlugoscWektora;
+        wektor[2] /= dlugoscWektora;
         return wektor;
     }
 
-
-    // value1 = liczba
     private static double[] skalowanieWektorow(double[] wektor, double liczba) {
         wektor[0] *= liczba;
         wektor[1] *= liczba;
@@ -1314,16 +914,11 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
         return wektor;
     }
 
-
-    // wektor1 = wektor1
-    // wektor2 = wektor2
     private static double tworzenieWektorow(double[] wektor1, double[] wektor2) {
         return wektor1[0] * wektor2[0] + wektor1[1] * wektor2[1] + wektor1[2] * wektor2[2];
     }
 
-
-    // srcVec1 = wektorOryginalny
-    private static double[] vAdd(double[] wektor, double[] wektorOryginalny) {
+    private static double[] dodawanieWektorow(double[] wektor, double[] wektorOryginalny) {
         wektor[0] += wektorOryginalny[0];
         wektor[1] += wektorOryginalny[1];
         wektor[2] += wektorOryginalny[2];
@@ -1343,7 +938,6 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
         wektor[2] = wektor1[0] * wektor2[1] - wektor1[1] * wektor2[0];
         return wektor;
     }
-
 
     @Override
     public void run() {
