@@ -5,7 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5d523b93-b380-48f9-8502-95c8ddee4955" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/AnimCube.java" afterPath="$PROJECT_DIR$/src/AnimCube.java" />
     </list>
     <ignored path="AnimCube_part1.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -31,8 +31,8 @@
       <file leaf-file-name="AnimCube.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/AnimCube.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="351">
-              <caret line="844" column="100" selection-start-line="844" selection-start-column="100" selection-end-line="844" selection-end-column="100" />
+            <state relative-caret-position="368">
+              <caret line="845" column="52" selection-start-line="845" selection-start-column="52" selection-end-line="845" selection-end-column="52" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -610,12 +610,12 @@
       <workItem from="1464821656169" duration="3537000" />
       <workItem from="1464860300333" duration="5133000" />
       <workItem from="1464874030098" duration="12184000" />
-      <workItem from="1464887329930" duration="167000" />
+      <workItem from="1464887329930" duration="231000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="58691000" />
+    <option name="totallyTimeSpent" value="58755000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1692" height="1050" extended-state="0" />
@@ -777,8 +777,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/AnimCube.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="351">
-          <caret line="844" column="100" selection-start-line="844" selection-start-column="100" selection-end-line="844" selection-end-column="100" />
+        <state relative-caret-position="368">
+          <caret line="845" column="52" selection-start-line="845" selection-start-column="52" selection-end-line="845" selection-end-column="52" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
