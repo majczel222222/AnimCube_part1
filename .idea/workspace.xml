@@ -31,8 +31,8 @@
       <file leaf-file-name="AnimCube.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/AnimCube.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="351">
-              <caret line="844" column="100" selection-start-line="844" selection-start-column="100" selection-end-line="844" selection-end-column="100" />
+            <state relative-caret-position="69">
+              <caret line="657" column="25" selection-start-line="657" selection-start-column="25" selection-end-line="657" selection-end-column="25" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -172,9 +172,9 @@
     <configuration default="false" name="AnimCube" type="Applet" factoryName="Applet" temporary="true">
       <option name="HTML_USED" value="false" />
       <option name="MAIN_CLASS_NAME" value="AnimCube" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="WIDTH" value="1680" />
+      <option name="HEIGHT" value="940" />
+      <option name="POLICY_FILE" value="file://$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
       <module name="AnimCube_part1" />
       <method />
     </configuration>
@@ -610,12 +610,12 @@
       <workItem from="1464821656169" duration="3537000" />
       <workItem from="1464860300333" duration="5133000" />
       <workItem from="1464874030098" duration="12184000" />
-      <workItem from="1464887329930" duration="317000" />
+      <workItem from="1464887329930" duration="1046000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="58841000" />
+    <option name="totallyTimeSpent" value="59570000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1692" height="1050" extended-state="0" />
@@ -777,8 +777,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/AnimCube.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="351">
-          <caret line="844" column="100" selection-start-line="844" selection-start-column="100" selection-end-line="844" selection-end-column="100" />
+        <state relative-caret-position="69">
+          <caret line="657" column="25" selection-start-line="657" selection-start-column="25" selection-end-line="657" selection-end-column="25" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
