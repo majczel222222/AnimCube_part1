@@ -842,6 +842,7 @@ public final class AnimCube extends Applet implements Runnable, MouseListener, M
     private final double[] wspolrzedneY = new double[8];
     private final double[][] koordynatyXowe = new double[6][4];
     private final double[][] koordynatyYkowe = new double[6][4];
+    private static final double[][] granica = {{0.02, 0.02}, {0.98, 0.02}, {0.98, 0.98}, {0.02, 0.98}};
     private static final int[][] stopnie = {{0, 0}, {0, 1}, {1, 1}, {1, 0}};
 
 
